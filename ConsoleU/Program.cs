@@ -4,30 +4,40 @@ using DataAccess.Concrete.InMemory;
 using Entities.Concrete;
 using System;
 
-namespace ConsoleUI
+namespace Console
 {
     class Program
     {
         static void Main(string[] args)
         {
-            CarManager carManager = new CarManager(new EfCarDal());
-            ColorManager colorManager = new ColorManager(new EfColorDal());
+            
             BrandManager brandManager = new BrandManager(new EfBrandsDal());
-
-            brandManager.Add(new Brand { BrandName = "Audi" });
-            colorManager.Add(new Color { ColorName = "Siyah" });
-            carManager.Add(new Car { BrandId = 1, ColorId = 1, DailyPrice = 150, Description = "Otamatik Sanzıman", ModelYear = 2019 });
-
-            foreach (var brand in brandManager.GetCarsByBrandId(1))
+            brandManager.Add(new Brand { BrandName = "BMW" });
+            var brands = brandManager.GetAll();
+            foreach (var item in brands)
             {
-                Console.WriteLine(brand.BrandName);
+                System.Console.WriteLine(" Marka : {0} ", item.BrandName);
             }
 
-            foreach (var color in colorManager.GetCarsByColorsId(1))
+
+            
+            ColorManager colorManager = new ColorManager(new EfColorDal());
+            colorManager.Add(new Color { ColorName = "Kırmızı" });
+            var colors = colorManager.GetAll();
+            foreach (var item in colors)
             {
-                Console.WriteLine(color.ColorName);
+                System.Console.WriteLine(" Rengi : {0} ", item.ColorName);
             }
 
+
+            
+            CarManager carManager = new CarManager(new EfCarDal());
+            carManager.Add(new Car { ColorId = 1, BrandId = 2, ModelYear = 2021, DailyPrice = 300, Description = "Otomatik sarj" });
+            var carDetail = carManager.GetCarDetails();
+            foreach (var item in carDetail)
+            {
+                System.Console.WriteLine("Araç Modeli :{0}  Araç Rengi :{1}  Günlük Fiyatı :{2} ",item.BrandName, item.ColorName, item.DailyPrice);
+            }
 
         }
     }
