@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
@@ -14,52 +16,41 @@ namespace Business.Concrete
         {
             _brandDal = brandsDal;
         }
-        
-        public void Add(Brand brand)
+
+        public IResult Add(Brand brand)
         {
             if (brand.BrandName.Length > 2)
             {
                 _brandDal.Add(brand);
-                Console.WriteLine("Marka eklendi");
+                return new SuccessResult(Messages.BrandAdded);
             }
-            else
-            {
-                Console.WriteLine("Marka eklenemedi marka uzunluğu 2 karakterden uzun olmalıde");
-            }
-
-            
+            return new ErrorResult(Messages.BrandAddedError);
         }
 
-        public void Deleted(Brand brand)
+        public IResult Delete(Brand brand)
         {
             _brandDal.Delete(brand);
-            Console.WriteLine("Marka silindi !");
+            return new SuccessResult(Messages.BrandDeleted);
         }
 
-        public List<Brand> GetAll()
+        public IResult Update(Brand brand)
         {
-            return _brandDal.GetAll();
-        }
-
-        public List<Brand> GetCarsByBrandId(int id)
-        {
-            return _brandDal.GetAll(b => b.BrandId == id);
-        }
-
-        public void Updated(Brand brand)
-        {
-            if (brand.BrandName.Length >= 2)
+            if(brand.BrandName.Length > 2)
             {
                 _brandDal.Update(brand);
-                Console.WriteLine("Marka güncellendi");
+                return new SuccessResult(Messages.BrandUpdated);
             }
+            return new ErrorResult(Messages.BrandUpdatedError);
+        }
 
-            else
-            {
-                Console.WriteLine("Marka güncellenemedi , lütfen  marka uzunlugunu 2 ve daha uzun karakterlerden olusturunuz");
-            }
-          
-           
+        public IDataResult<List<Brand>> GetAll()
+        {
+            return new SuccessDataResult<List<Brand>>(_brandDal.GetAll());
+        }
+        
+        public IDataResult<Brand> GetById(int id)
+        {
+            return new SuccessDataResult<Brand>(_brandDal.Get(b => b.BrandId == id));
         }
     }
 }
