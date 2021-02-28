@@ -35,6 +35,10 @@ namespace Business.Constants
         public static string ColorDeleted = "Renk silindi";
         public static string ColorUpdated = "Renk güncellendi";
         public static string ColorUpdatedError = "Renk güncellenemedi";
-
+        public static string CarImageAdded = "Araç görüntüsü eklendi";
+        public static string CarImageDeleted = "Araç görüntüsü silindi";
+        public static string ImagesAdded="Görüntü yüklendi";
+        public static string FailAddedImageLimit="Görüntü limitine ulasıldı";
+        public static string CarImageLimitExceeded = "5 ten fazla görüntü eklenemez";
     }
 }
