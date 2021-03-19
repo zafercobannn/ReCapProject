@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Business.Constants;
+﻿using Business.Constants;
 using Castle.DynamicProxy;
-using Core.Extensions;
 using Core.Utilities.Interceptors;
 using Core.Utilities.IoC;
+using Core.Utilities.Security.JWT;
 using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-
-namespace Business.BusinessAspects.Autofac
+namespace Business.BusinesAspects.Autofac
 {
     public class SecuredOperation : MethodInterception
     {
-        //JWT İCİN
         private string[] _roles;
         private IHttpContextAccessor _httpContextAccessor;
 
@@ -21,7 +19,6 @@ namespace Business.BusinessAspects.Autofac
         {
             _roles = roles.Split(',');
             _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
-
         }
 
         protected override void OnBefore(IInvocation invocation)

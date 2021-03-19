@@ -8,77 +8,70 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
     public class RentalManager : IRentalService
     {
-        IRentalsDal _rentalDal;
+        IRentalDal _rentalDal;
 
-        public RentalManager(IRentalsDal rentalDal)
+        public RentalManager(IRentalDal rentalDal)
         {
             _rentalDal = rentalDal;
-        }
-
-        public IResult Add(Rental rental)
-        {
-            var result = CheckReturnDate(rental.CarId);
-            if (!result.Success)
-            {
-                return new ErrorResult(result.Message);
-            }
-            _rentalDal.Add(rental);
-            return new SuccessResult(result.Message);
-        }
-
-        public IResult CheckReturnDate(int carId)
-        {
-            var result = _rentalDal.GetRentalDetails(a => a.CarId == carId && a.ReturnDate == null);
-            if (result.Count>0)
-            {
-                return new ErrorResult(Messages.RentalAddedError);
-            }
-            return new SuccessResult(Messages.RentalAdded);
-        }
-
-        public IResult Delete(Rental rental)
-        {
-            _rentalDal.Delete(rental);
-            return new SuccessResult(Messages.RentalDeleted);
         }
 
         public IDataResult<List<Rental>> GetAll()
         {
             return new SuccessDataResult<List<Rental>>(_rentalDal.GetAll());
         }
-
-        public IDataResult<Rental>GetById(int id)
+        public IResult Add(Rental entity)
         {
-            return new SuccessDataResult<Rental>(_rentalDal.Get(r => r.Id == id));
+            _rentalDal.Add(entity);
+            return new SuccessResult("Rental" + Messages.AddSingular);
         }
 
-        public IDataResult<List<RentalDetailDto>> GetRentalDetailDto(int carId)
+        public IResult Update(Rental entity)
         {
-            return new SuccessDataResult<List<RentalDetailDto>>(_rentalDal.GetRentalDetails(a => a.CarId == carId));
+            _rentalDal.Update(entity);
+            return new SuccessResult("Rental" + Messages.UpdateSingular);
         }
 
-        public IResult Update(Rental rental)
+        public IResult Delete(Rental entity)
         {
-            _rentalDal.Update(rental);
-            return new SuccessResult(Messages.BrandUpdated);
+            _rentalDal.Delete(entity);
+            return new SuccessResult("Rental" + Messages.DeleteSingular);
         }
 
-        public IResult UpdateReturnDate(int Id)
+        public IDataResult<Rental> Get(Rental entity)
         {
-            var result = _rentalDal.GetAll(x => x.CarId == Id);
-            var updatedRental = result.LastOrDefault();
-            if (updatedRental.ReturnDate != null)
+            return new SuccessDataResult<Rental>(_rentalDal.Get(x => x.ID == entity.ID));
+        }
+
+        public IResult GetList(List<Rental> list)
+        {
+            Console.WriteLine("\n------- Rental List -------");
+            foreach (var rental in list)
             {
-                return new ErrorResult();
+                Console.WriteLine("{0}- Car ID: {1}\n   Customer ID: {2}\n   Rent Date: {3}\n   Return Date: {4}\n", rental.ID, rental.CarID, rental.CustomerID, rental.RentDate, rental.ReturnDate);
             }
-            updatedRental.ReturnDate = DateTime.Now;
-            _rentalDal.Update(updatedRental);
             return new SuccessResult();
+        }
+
+        public IDataResult<Rental> FindByID(int Id)
+        {
+            Rental r = new Rental();
+            if (_rentalDal.GetAll().Any(x => x.ID == Id))
+            {
+                r = _rentalDal.GetAll().FirstOrDefault(x => x.ID == Id);
+            }
+            else Console.WriteLine(Messages.NotExist + "rental");
+            return new SuccessDataResult<Rental>(r);
+        }
+
+        public IDataResult<List<RentalDetailDto>> GetRentalDetails()
+        {
+            return new SuccessDataResult<List<RentalDetailDto>>(_rentalDal.GetRentalDetails());
         }
     }
 }

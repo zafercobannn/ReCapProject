@@ -1,37 +1,41 @@
-﻿using Core.DataAccess.EntityFrameworkk;
+﻿using Core.DataAccess.EntityFramework;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class EfCarDal : EfEntityRepositoryBase<Car, MyFinalProjectContext>, ICarsDal
+    public class EfCarDal : EfEntityRepositoryBase<Car, MyFinalProjectContext>, ICarDal
     {
         public List<CarDetailDto> GetCarDetails()
         {
             using (MyFinalProjectContext context = new MyFinalProjectContext())
             {
-                var result = from cr in context.Cars
+                var result = from c in context.Cars
                              join b in context.Brands
-                             on cr.BrandId equals b.BrandId
-                             join cl in context.Colors
-                             on cr.ColorId equals cl.ColorId
-                             select new CarDetailDto 
-                             {  
-                                 CarId=cr.CarId,
-                                 CarName=cr.CarName,
-                                 ModelYear=cr.ModelYear,
-                                 Description=cr.Description,
-                                 BrandName=b.BrandName, 
-                                 ColorName=cl.ColorName, 
-                                 DailyPrice=cr.DailyPrice,
-                                 
+                             on c.BrandID equals b.ID
+                             join co in context.Colors
+                             on c.ColorID equals co.ID
+                             join i in context.CarImages
+                             on c.ID equals i.CarID
+                             select new CarDetailDto
+                             {
+                                 CarID = c.ID,
+                                 CarName = c.Name,
+                                 BrandName = b.Name,
+                                 ColorName = co.Name,
+                                 DailyPrice = c.DailyPrice,
+                                 Description = c.Description,
+                                 IsRented = c.IsRented,
+                                 ModelYear = c.ModelYear,
+                                 ImagePath = i.ImagePath
                              };
                 return result.ToList();
             }

@@ -1,25 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Core.Utilities.Results
 {
     public class Result : IResult
     {
+        private bool _success;
+        private string _message;
 
-        public Result(bool success,string message):this(success)
+        public Result(bool success, string message) : this(success)
         {
-            Message = message;
+            this._message = message;
         }
+
         public Result(bool success)
         {
-            Success = success;
+            this._success = success;
         }
-        
 
+        public bool Success
+        {
+            get { return this._success; }
+        }
 
-        public bool Success { get; }
-
-        public string Message { get; }
+        public string Message
+        {
+            get { return this._message; }
+        }
     }
 }

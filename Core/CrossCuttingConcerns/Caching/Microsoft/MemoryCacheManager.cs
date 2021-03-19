@@ -19,7 +19,7 @@ namespace Core.CrossCuttingConcerns.Caching.Microsoft
         }
         public void Add(string key, object value, int duration)
         {
-            _memoryCache.Set(key, value, TimeSpan.FromMinutes(duration));
+            _memoryCache.Set(key, value, TimeSpan.FromMinutes(10));
         }
 
         public T Get<T>(string key)
@@ -34,7 +34,7 @@ namespace Core.CrossCuttingConcerns.Caching.Microsoft
 
         public bool IsAdd(string key)
         {
-            return _memoryCache.TryGetValue(key, out _); //"out _" demek bir sey dondurmek ıstenmıyorsa bu kullanılır.
+            return _memoryCache.TryGetValue(key, out _);
         }
 
         public void Remove(string key)

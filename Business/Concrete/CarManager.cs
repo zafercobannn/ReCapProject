@@ -1,11 +1,11 @@
 ﻿using Business.Abstract;
-using Business.BusinessAspects.Autofac;
+using Business.BusinesAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
-using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Performance;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
+using Core.Aspects.Caching;
 using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -14,90 +14,101 @@ using Entities.DTOs;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-
-//CrossCuttingConcerns : loglama,cache,validation,transaction,authorization gibi bunlara cross cuttıng concerns denir
+using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
     public class CarManager : ICarService
     {
-        ICarsDal _carDal;
+        ICarDal _carDal;
 
-        public CarManager(ICarsDal carDal)
+        public CarManager(ICarDal carDal)
         {
             _carDal = carDal;
         }
-        [SecuredOperation("admin,product.add")]
+        [SecuredOperation("admin")]
         [ValidationAspect(typeof(CarValidator))]
         [CacheRemoveAspect("ICarService.Get")]
-        public IResult Add(Car car)
+        public IResult Add(Car entity)
         {
-            
-            _carDal.Add(car);
-            return new SuccessResult(Messages.CarAdded);
-
-        }
-        [TransactionScopeAspect]
-        public IResult AddTransactionalTest(Car car)
-        {
-            throw new NotImplementedException();
+            _carDal.Add(entity);
+            return new SuccessResult("Car" + Messages.AddSingular);
         }
 
         [CacheRemoveAspect("ICarService.Get")]
-        public IResult Delete(Car car)
+        public IResult Update(Car entity)
         {
-            _carDal.Delete(car);
-            return new SuccessResult(Messages.CarDeleted);
+            _carDal.Update(entity);
+            return new SuccessResult("Car" + Messages.UpdateSingular);
         }
+
+        public IResult Delete(Car entity)
+        {
+            _carDal.Delete(entity);
+            return new SuccessResult("Car" + Messages.DeleteSingular);
+        }
+
+        public IDataResult<Car> Get(Car entity)
+        {
+            return new SuccessDataResult<Car>(_carDal.Get(x => x.ID == entity.ID));
+        }
+
+        public IDataResult<List<Car>> GetCarsByBrandID(int Id)
+        {
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(x => x.BrandID == Id));
+        }
+
+        [CacheAspect]
+        public IDataResult<List<Car>> GetCarsByColorID(int Id)
+        {
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(x => x.ColorID == Id));
+        }
+
         [CacheAspect]
         [PerformanceAspect(5)]
         public IDataResult<List<Car>> GetAll()
         {
-            if(DateTime.Now.Hour == 22)
-            {
-                return new ErrorDataResult<List<Car>>(Messages.MaintenanceTime);
-            }
-            return new SuccessDataResult<List<Car>>(_carDal.GetAll(), Messages.CarsListed);
-        }
-
-        public IDataResult<List<Car>> GetAllByBrandId(int id)
-        {
-            return new SuccessDataResult<List<Car>>(_carDal.GetAll(b => b.BrandId == id));
-        }
-        [CacheAspect]
-        public IDataResult<List<Car>> GetAllByColorId(int id)
-        {
-            return new SuccessDataResult<List<Car>>(_carDal.GetAll(b => b.ColorId == id));
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll());
         }
 
         public IDataResult<List<Car>> GetByDailyPrice(decimal min, decimal max)
         {
-            return new SuccessDataResult<List<Car>>(_carDal.GetAll(b => b.DailyPrice == min && b.DailyPrice == max));
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(x => x.DailyPrice >= min && x.DailyPrice <= max));
         }
 
-        public IDataResult<Car> GetById(int id)
+        public IResult GetList(List<Car> list)
         {
-            return new SuccessDataResult<Car>(_carDal.Get(b => b.CarId == id));
+            Console.WriteLine("\n------- Car List -------");
+
+            foreach (var car in list)
+            {
+                Console.WriteLine("{0}- Brand ID: {1}\n    Color ID: {2}\n    Name: {3}\n    Model Year: {4}\n    Daily Price: {5} TL\n    Description: {6}\n", car.ID, car.BrandID, car.ColorID, car.Name, car.ModelYear, car.DailyPrice, car.Description);
+            }
+            return new SuccessResult();
         }
 
-        public IDataResult<List<CarDetailDto>>GetCarDetails()
+        public IDataResult<Car> FindByID(int Id)
         {
-            if(DateTime.Now.Hour == 22)
+            Car c = new Car();
+            if (_carDal.GetAll().Any(x => x.ID == Id))
             {
-                return new ErrorDataResult<List<CarDetailDto>>(Messages.MaintenanceTime);
+                c = _carDal.GetAll().FirstOrDefault(x => x.ID == Id);
             }
-            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails());
+            else Console.WriteLine("No such car was found.");
+            return new SuccessDataResult<Car>(c);
         }
-        [CacheRemoveAspect("ICarService.Get")]
-        public IResult Update(Car car)
+
+        public IDataResult<List<CarDetailDto>> GetCarDetails(int id)
         {
-            if (car.DailyPrice > 0)
-            {
-                _carDal.Update(car);
-                return new SuccessResult(Messages.CarUpdated);
-            }
-            return new ErrorResult(Messages.CarUpdatedError);
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails().Where(x => x.CarID == id).ToList());
+        }
+
+        [TransactionScopeAspect]
+        public IResult AddTransactionalTest(Car car)
+        {
+            throw new NotImplementedException();
         }
     }
 }

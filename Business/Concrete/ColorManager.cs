@@ -5,50 +5,68 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
     public class ColorManager : IColorService
     {
-        IColorsDal _colorDal;
-        public ColorManager(IColorsDal colorsDal)
+        IColorDal _colorDal;
+
+        public ColorManager(IColorDal colorDal)
         {
-            _colorDal = colorsDal;
+            _colorDal = colorDal;
         }
 
-
-        public IResult Add(Color color)
+        public IResult Add(Color entity)
         {
-            _colorDal.Add(color);
-            return new SuccessResult(Messages.ColorAdded);
+            _colorDal.Add(entity);
+            return new SuccessResult("Color" + Messages.AddSingular);
         }
 
-        public IResult Delete(Color color)
+        public IResult Update(Color entity)
         {
-            _colorDal.Delete(color);
-            return new SuccessResult(Messages.ColorDeleted);
-        }
-        
-        public IResult Update(Color color)
-        {
-            _colorDal.Update(color);
-            return new SuccessResult(Messages.ColorUpdated);
+            _colorDal.Update(entity);
+            return new SuccessResult("Color" + Messages.UpdateSingular);
         }
 
-        public IDataResult<List<Color>> GetAllByColorId(int id)
+        public IResult Delete(Color entity)
         {
-            return new SuccessDataResult<List<Color>>(_colorDal.GetAll(w => w.ColorId == id));
+            _colorDal.Delete(entity);
+            return new SuccessResult("Color" + Messages.DeleteSingular);
         }
 
-        public IDataResult<Color> GetById(int id)
+        public IDataResult<Color> Get(Color entity)
         {
-            return new SuccessDataResult<Color>(_colorDal.Get(b => b.ColorId == id));
+            return new SuccessDataResult<Color>(_colorDal.Get(x => x.ID == entity.ID));
         }
-    
+
         public IDataResult<List<Color>> GetAll()
         {
             return new SuccessDataResult<List<Color>>(_colorDal.GetAll());
+        }
+
+        public IResult GetList(List<Color> list)
+        {
+            Console.WriteLine("\n------- Color List -------");
+            foreach (var color in list)
+            {
+                Console.WriteLine("{0}- Color Name: {1}", color.ID, color.Name);
+            }
+            return new SuccessResult();
+        }
+
+        public IDataResult<Color> FindByID(int Id)
+        {
+            Color c = new Color();
+            if (_colorDal.GetAll().Any(x => x.ID == Id))
+            {
+                c = _colorDal.GetAll().FirstOrDefault(x => x.ID == Id);
+            }
+            else Console.WriteLine("No such color was found.");
+            return new SuccessDataResult<Color>(c);
         }
     }
 }

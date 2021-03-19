@@ -5,52 +5,69 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
     public class BrandManager : IBrandService
     {
-        IBrandsDal _brandDal;
-        public BrandManager(IBrandsDal brandsDal)
+        IBrandDal _brandDal;
+
+        public BrandManager(IBrandDal brandDal)
         {
-            _brandDal = brandsDal;
+            _brandDal = brandDal;
         }
 
-        public IResult Add(Brand brand)
+        public IResult Add(Brand entity)
         {
-            if (brand.BrandName.Length > 2)
-            {
-                _brandDal.Add(brand);
-                return new SuccessResult(Messages.BrandAdded);
-            }
-            return new ErrorResult(Messages.BrandAddedError);
+            _brandDal.Add(entity);
+            return new SuccessResult("Brand" + Messages.AddSingular);
         }
 
-        public IResult Delete(Brand brand)
+        public IResult Update(Brand entity)
         {
-            _brandDal.Delete(brand);
-            return new SuccessResult(Messages.BrandDeleted);
+            _brandDal.Update(entity);
+            return new SuccessResult("Brand" + Messages.UpdateSingular);
         }
 
-        public IResult Update(Brand brand)
+        public IResult Delete(Brand entity)
         {
-            if(brand.BrandName.Length > 2)
-            {
-                _brandDal.Update(brand);
-                return new SuccessResult(Messages.BrandUpdated);
-            }
-            return new ErrorResult(Messages.BrandUpdatedError);
+            _brandDal.Delete(entity);
+            return new SuccessResult("Brand" + Messages.DeleteSingular);
+        }
+
+        public IDataResult<Brand> Get(Brand entity)
+        {
+            return new SuccessDataResult<Brand>(_brandDal.Get(x => x.ID == entity.ID));
         }
 
         public IDataResult<List<Brand>> GetAll()
         {
             return new SuccessDataResult<List<Brand>>(_brandDal.GetAll());
         }
-        
-        public IDataResult<Brand> GetById(int id)
+
+        public IResult GetList(List<Brand> list)
         {
-            return new SuccessDataResult<Brand>(_brandDal.Get(b => b.BrandId == id));
+            Console.WriteLine("\n------- Brand List -------");
+            foreach (var brand in list)
+            {
+                Console.WriteLine("{0}- Brand Name: {1}", brand.ID, brand.Name);
+            }
+            return new SuccessResult();
         }
+
+        public IDataResult<Brand> FindByID(int Id)
+        {
+            Brand b = new Brand();
+            if (_brandDal.GetAll().Any(x => x.ID == Id))
+            {
+                b = _brandDal.GetAll().FirstOrDefault(x => x.ID == Id);
+            }
+            else Console.WriteLine("No such brand was found.");
+            return new SuccessDataResult<Brand>(b);
+        }
+
     }
 }

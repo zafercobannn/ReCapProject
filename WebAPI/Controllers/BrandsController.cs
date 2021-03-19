@@ -1,59 +1,29 @@
-﻿using Business.Abstract;
-using Entities.Concrete;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Business.Abstract;
+using Entities.Concrete;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Produces("application/json")]
+    [Route("api/Brands")]
     public class BrandsController : ControllerBase
     {
-        IBrandService _brandService;
+        IBrandService _brandservice;
+
         public BrandsController(IBrandService brandService)
         {
-            _brandService = brandService;
+            _brandservice = brandService;
         }
 
-        [HttpGet("getall")]
-        public IActionResult GetAll()
-        {
-            var result = _brandService.GetAll();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-        [HttpGet("getbyid")]
-        public IActionResult GetById(int id)
-        {
-            var result = _brandService.GetById(id);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        }
         [HttpPost("add")]
-        public IActionResult Add(Brand brand)
+        public IActionResult Add([FromBody] Brand brand)
         {
-            var result = _brandService.Add(brand);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-        [HttpPost("delete")]
-        public IActionResult Delete(Brand brand)
-        {
-            var result = _brandService.Delete(brand);
+            var result = _brandservice.Add(brand);
             if (result.Success)
             {
                 return Ok(result);
@@ -62,9 +32,54 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("update")]
-        public IActionResult Update(Brand brand)
+        public IActionResult Update([FromBody] Brand brand)
         {
-            var result = _brandService.Update(brand);
+            var result = _brandservice.Update(brand);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpPost("delete")]
+        public IActionResult Delete([FromBody] Brand brand)
+        {
+            var result = _brandservice.Delete(brand);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("get")]
+        public IActionResult Get([FromBody] Brand brand)
+        {
+            var result = _brandservice.Get(brand);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getall")]
+        public IActionResult GetAll()
+        {
+            var result = _brandservice.GetAll();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getbyid")]
+
+        public IActionResult GetById(int id)
+        {
+            var result = _brandservice.FindByID(id);
             if (result.Success)
             {
                 return Ok(result);

@@ -1,63 +1,81 @@
 ﻿using Business.Abstract;
 using Business.Constants;
-using Business.ValidationRules.FluentValidation;
-using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
     public class UserManager : IUserService
     {
-        IUsersDal _userDal;
-        public UserManager(IUsersDal userDal)
+        IUserDal _userDal;
+
+        public UserManager(IUserDal userDal)
         {
             _userDal = userDal;
-        }
-        [ValidationAspect(typeof(UserValidator))]
-        public IResult Add(User user)
-        {
-            _userDal.Add(user);
-            return new SuccessResult(Messages.UserAdded);
-        }
-
-        public IResult Delete(User user)
-        {
-            _userDal.Delete(user);
-            return new SuccessResult(Messages.UserDeleted);
         }
 
         public IDataResult<List<User>> GetAll()
         {
-            return new SuccessDataResult<List<User>>(_userDal.GetAll(), Messages.UserListed);
+            return new SuccessDataResult<List<User>>(_userDal.GetAll());
+        }
+        public IResult Add(User entity)
+        {
+            _userDal.Add(entity);
+            return new SuccessResult("User" + Messages.AddSingular);
         }
 
-        public IDataResult<User>GetById(int id)
+        public IResult Update(User entity)
         {
-            return new SuccessDataResult<User>(_userDal.Get(x => x.Id == id));
+            _userDal.Update(entity);
+            return new SuccessResult("User" + Messages.UpdateSingular);
         }
 
-        public IDataResult<User> GetByMail(string email)
+        public IResult Delete(User entity)
         {
-            return new SuccessDataResult<User>(_userDal.Get(u => u.Email == email));
+            _userDal.Delete(entity);
+            return new SuccessResult("User" + Messages.DeleteSingular);
+        }
+
+        public IDataResult<User> Get(User entity)
+        {
+            return new SuccessDataResult<User>(_userDal.Get(x => x.ID == entity.ID));
+        }
+
+        public IResult GetList(List<User> list)
+        {
+            Console.WriteLine("\n------- User List -------");
+            foreach (var user in list)
+            {
+                Console.WriteLine("{0}- First Name: {1}\n   Last Name: {2}\n   Email: {3}\n", user.ID, user.FirstName, user.LastName, user.Email);
+            }
+            return new SuccessResult();
+        }
+
+        public IDataResult<User> FindByID(int Id)
+        {
+            User u = new User();
+            if (_userDal.GetAll().Any(x => x.ID == Id))
+            {
+                u = _userDal.GetAll().FirstOrDefault(x => x.ID == Id);
+            }
+            else Console.WriteLine(Messages.NotExist + "user");
+            return new SuccessDataResult<User>(u);
         }
 
         public IDataResult<List<OperationClaim>> GetClaims(User user)
         {
             return new SuccessDataResult<List<OperationClaim>>(_userDal.GetClaims(user));
-
         }
 
-        [ValidationAspect(typeof(UserValidator))]
-        public IResult Update(User user)
+        public IDataResult<User> GetByMail(string email)
         {
-            _userDal.Update(user);
-            return new SuccessResult(Messages.UserUpdated);
+            return new SuccessDataResult<User>(_userDal.Get(u => u.Email == email));
         }
     }
 }

@@ -1,53 +1,35 @@
 ﻿using Core.Entities.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Business.Constants
 {
     public static class Messages
     {
-        public static string CarAdded = "Araç eklendi";
-        public static string CarNameInvalid = "Araç ismi geçersiz";
-        public static string MaintenanceTime = "Sistem bakımdadır";
-        public static string CarsListed = "Araclar Listelendi";
-        public static string CarDeleted = "Araç silindi";
-        public static string CarUpdated = "Araç güncellendi";
-        public static string CarUpdatedError = "Araç güncellenemedi";
-        public static string RentalAdded = "Kiralama işlemi basarıldı";
-        public static string RentalDeleted = "Kiralama işlemi basarısız";
-        public static string RentalUpdated = "Kiralama işlemi güncellendi";
-        public static string RentalAddedError = "Kiralama işlemi yapılamadı , öncelikle aracın teslim edilmesi gerekiyor";
-        public static string UserAdded = "Kullanıcı eklendi";
-        public static string UserDeleted = "Kullanıcı silindi";
-        public static string UserListed = "Kullanıcılar listelendi";
-        public static string UserUpdated = "Kullanıcılar güncellendi";
-        public static string CustomerAdded = "Müsteri eklendi ";
-        public static string CustomerDeleted = "Müsteri silindi ";
-        public static string CustomerUpdated = "Müsteri güncellendi ";
-        public static string CustomerListed = "Müsteriler listelendi ";
-        public static string BrandAdded = "Marka eklendi";
-        public static string BrandAddedError = "Marka eklenemedi";
-        public static string BrandDeleted = "Marka silindi";
-        public static string BrandUpdated = "Marka güncellendi";
-        public static string BrandUpdatedError = "Marka güncellenemedi";
-        public static string ColorAdded = "Renk eklendi";
-        public static string ColorAddedError = "Renk eklenemedi";
-        public static string ColorDeleted = "Renk silindi";
-        public static string ColorUpdated = "Renk güncellendi";
-        public static string ColorUpdatedError = "Renk güncellenemedi";
-        public static string CarImageAdded = "Araç görüntüsü eklendi";
-        public static string CarImageDeleted = "Araç görüntüsü silindi";
-        public static string ImagesAdded="Görüntü yüklendi";
-        public static string FailAddedImageLimit="Görüntü limitine ulasıldı";
-        public static string CarImageLimitExceeded = "5 ten fazla görüntü eklenemez";
-        public static string AuthorizationDenied= "Yetkiniz yok";
-        public static string UserRegistered= "Kullanıcı başarıyla kaydedildi";
-        public static string UserNotFound= "Kullanıcı bulunamadı";
-        public static string PasswordError= "Şifre hatalı";
-        public static string SuccessfulLogin= "Sisteme giriş başarılı";
-        public static string UserAlreadyExists= "Bu kullanıcı zaten mevcut";
-        public static string AccessTokenCreated= "Kullanıcı başarıyla kaydedildi";
+        public static string AddSingular = " has been added.";
+        public static string UpdateSingular = " has been updated.";
+        public static string DeleteSingular = " has been deleted.";
+        public static string CarNameValidation = "The value entered must be at least 2 characters.";
+        public static string PriceValidation = "Please enter a value greater than 0.";
+        public static string NotExist = "There is no such a ";
+        public static string AlreadyExist = " is already exists.";
+        public static string RentSuccess = "Car rental has been successfully completed.";
+        public static string ReturnSuccess = "Car delivery has been successfully completed.";
+        public static string InvalidName = "Name must contain at least two characters.";
+        public static string InvalidPrice = "Daily Price must be greater than 0.";
+        public static string InvalidFileExtension = "Invalid file extension.";
+        public static string ImageNumberLimitExceeded = "The image limit for this car is full and new images cannot be added.";
+
+        public static string AuthorizationDenied = "Authorization Denied.";
+        public static string AccessTokenCreated = "Access Token has been created.";
+        public static string UserAlreadyExists = "User is already exists.";
+        public static string SuccessfulLogin = "Login successful.";
+        public static string PasswordError = "Incorrect password.";
+        public static string UserNotFound = "User was not found";
+        public static string UserRegistered = "User has been registered.";
     }
 }

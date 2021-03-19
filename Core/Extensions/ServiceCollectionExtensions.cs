@@ -1,22 +1,20 @@
-﻿using System;
+﻿using Core.Utilities.IoC;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Core.Utilities.IoC;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddDependencyResolvers(this IServiceCollection services,
-            ICoreModule[] modules)
+        public static IServiceCollection AddDepencencyResolvers(this IServiceCollection serviceCollections, ICoreModule[] modules)
         {
             foreach (var module in modules)
             {
-                module.Load(services);
+                module.Load(serviceCollections);
             }
-
-            return ServiceTool.Create(services);
+            return ServiceTool.Create(serviceCollections);
         }
     }
 }

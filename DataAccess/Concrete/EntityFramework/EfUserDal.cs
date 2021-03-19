@@ -1,16 +1,15 @@
-﻿using Core.DataAccess;
+﻿using Core.DataAccess.EntityFramework;
 using Core.Entities.Concrete;
+using DataAccess.Abstract;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using DataAccess.Abstract;
-using Core.DataAccess.EntityFrameworkk;
-using Core.Utilities.Results;
-using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class EfUserDal : EfEntityRepositoryBase<User, MyFinalProjectContext>, IUsersDal
+    public class EfUserDal : EfEntityRepositoryBase<User, MyFinalProjectContext>, IUserDal
     {
         public List<OperationClaim> GetClaims(User user)
         {
@@ -18,9 +17,9 @@ namespace DataAccess.Concrete.EntityFramework
             {
                 var result = from operationClaim in context.OperationClaims
                              join userOperationClaim in context.UserOperationClaims
-                                 on operationClaim.Id equals userOperationClaim.OperationClaimId
-                             where userOperationClaim.UserId == user.Id
-                             select new OperationClaim { Id = operationClaim.Id, Name = operationClaim.Name };
+                                 on operationClaim.ID equals userOperationClaim.OperationClaimID
+                             where userOperationClaim.UserID == user.ID
+                             select new OperationClaim { ID = operationClaim.ID, Name = operationClaim.Name };
                 return result.ToList();
 
             }
