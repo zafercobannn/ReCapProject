@@ -12,10 +12,13 @@ namespace Business.Abstract
 {
     public interface ICarService : IEntityService<Car>
     {
-        IDataResult<List<Car>> GetCarsByBrandID(int Id);
-        IDataResult<List<Car>> GetCarsByColorID(int Id);
+        IDataResult<List<CarDetailDto>> GetCarsByBrandID(int Id);
+        IDataResult<List<CarDetailDto>> GetCarsByColorID(int Id);
         IDataResult<List<Car>> GetByDailyPrice(decimal min, decimal max);
         IDataResult<List<CarDetailDto>> GetCarDetails(int id);
+
+        IDataResult<List<CarDetailDto>> GetAllCarDetailsByFilter(int brandId, int colorId);
+        IDataResult<List<CarDetailDto>> GetAllCarDetails();
         IResult AddTransactionalTest(Car car);
     }
 }

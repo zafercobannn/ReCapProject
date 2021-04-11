@@ -21,10 +21,12 @@ namespace DataAccess.Concrete.EntityFramework
                              on u.ID equals c.UserID
                              select new CustomerDetailDto
                              {
+                                 Id = u.ID,
                                  FirstName = u.FirstName,
                                  LastName = u.LastName,
                                  Email = u.Email,
                                  CompanyName = c.CompanyName
+  
                              };
                 return result.ToList();
             }

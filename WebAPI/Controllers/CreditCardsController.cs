@@ -1,29 +1,28 @@
-﻿using System;
+﻿using Business.Abstract;
+using Entities.Concrete;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Business.Abstract;
-using Entities.Concrete;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RentalsController : ControllerBase
+    public class CreditCardsController : Controller
     {
-        IRentalService _rentalService;
+        ICreditCardService _creditCardService;
 
-        public RentalsController(IRentalService rentalService)
+        public CreditCardsController(ICreditCardService creditCardService)
         {
-            _rentalService = rentalService;
+            _creditCardService = creditCardService;
         }
 
         [HttpPost("add")]
-        public IActionResult Add(Rental rental)
+        public IActionResult Add(CreditCard card)
         {
-            var result = _rentalService.Add(rental);
+            var result = _creditCardService.Add(card);
             if (result.Success)
             {
                 return Ok(result);
@@ -32,9 +31,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("update")]
-        public IActionResult Update([FromBody] Rental rental)
+        public IActionResult Update([FromBody] CreditCard card)
         {
-            var result = _rentalService.Update(rental);
+            var result = _creditCardService.Update(card);
             if (result.Success)
             {
                 return Ok(result);
@@ -43,9 +42,20 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("delete")]
-        public IActionResult Delete([FromBody] Rental rental)
+        public IActionResult Delete(CreditCard card)
         {
-            var result = _rentalService.Delete(rental);
+            var result = _creditCardService.Delete(card);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpPost("deletebycardid")]
+        public IActionResult DeleteByCardId([FromBody] int cardId)
+        {
+            var result = _creditCardService.DeleteById(cardId);
             if (result.Success)
             {
                 return Ok(result);
@@ -54,9 +64,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("get")]
-        public IActionResult Get([FromBody] Rental rental)
+        public IActionResult Get([FromBody] CreditCard card)
         {
-            var result = _rentalService.Get(rental);
+            var result = _creditCardService.Get(card);
             if (result.Success)
             {
                 return Ok(result);
@@ -67,7 +77,7 @@ namespace WebAPI.Controllers
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
-            var result = _rentalService.GetAll();
+            var result = _creditCardService.GetAll();
             if (result.Success)
             {
                 return Ok(result);
@@ -77,9 +87,9 @@ namespace WebAPI.Controllers
 
         [HttpGet("getbyid")]
 
-        public IActionResult GetById(int id)
+        public IActionResult GetById(int cardId)
         {
-            var result = _rentalService.FindByID(id);
+            var result = _creditCardService.FindByID(cardId);
             if (result.Success)
             {
                 return Ok(result);
@@ -87,18 +97,16 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getrentaldetails")]
+        [HttpGet("getallcreditcardbycustomerid")]
 
-        public IActionResult GetRentalDetails()
+        public IActionResult GetAllCreditCardByCustomerId(int customerId)
         {
-            var result = _rentalService.GetRentalDetails();
+            var result = _creditCardService.GetAllCreditCardByCustomerId(customerId);
             if (result.Success)
             {
                 return Ok(result);
             }
             return BadRequest(result);
         }
-
-      
     }
 }

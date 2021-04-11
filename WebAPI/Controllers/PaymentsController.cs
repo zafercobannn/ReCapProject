@@ -1,6 +1,5 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,29 +10,19 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CarImagesController : ControllerBase
+    public class PaymentsController : Controller
     {
-        ICarImageService _carImageService;
-        public CarImagesController(ICarImageService carImageService)
+        IPaymentService _paymentService;
+
+        public PaymentsController(IPaymentService paymentService)
         {
-            _carImageService = carImageService;
+            _paymentService = paymentService;
         }
 
         [HttpPost("add")]
-        public IActionResult Add([FromForm] IFormFile image, [FromForm] CarImage img)
+        public IActionResult Add([FromBody] Payment payment)
         {
-            var result = _carImageService.Add(image, img);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpPost("delete")]
-        public IActionResult Delete([FromForm] CarImage img)
-        {
-            var result = _carImageService.Delete(img);
+            var result = _paymentService.Add(payment);
             if (result.Success)
             {
                 return Ok(result);
@@ -42,9 +31,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("update")]
-        public IActionResult Update([FromForm] IFormFile image, [FromForm] CarImage img)
+        public IActionResult Update([FromBody] Payment payment)
         {
-            var result = _carImageService.Update(image, img);
+            var result = _paymentService.Update(payment);
             if (result.Success)
             {
                 return Ok(result);
@@ -52,10 +41,21 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getcarlistbycarid")]
-        public IActionResult GetCarListByCarID(int carId)
+        [HttpPost("delete")]
+        public IActionResult Delete([FromBody] Payment payment)
         {
-            var result = _carImageService.GetCarListByCarID(carId);
+            var result = _paymentService.Delete(payment);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("get")]
+        public IActionResult Get([FromBody] Payment payment)
+        {
+            var result = _paymentService.Get(payment);
             if (result.Success)
             {
                 return Ok(result);
@@ -66,7 +66,7 @@ namespace WebAPI.Controllers
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
-            var result = _carImageService.GetAll();
+            var result = _paymentService.GetAll();
             if (result.Success)
             {
                 return Ok(result);
@@ -74,16 +74,16 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getcarimagebyid")]
-        public IActionResult Get(int Id)
+        [HttpGet("getbyid")]
+
+        public IActionResult GetById(int paymentId)
         {
-            var result = _carImageService.FindByID(Id);
+            var result = _paymentService.FindByID(paymentId);
             if (result.Success)
             {
                 return Ok(result);
             }
             return BadRequest(result);
         }
-
     }
 }
